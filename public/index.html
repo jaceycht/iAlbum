@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>iAlbum</title>
+    <link rel="stylesheet" href="/stylesheets/mystyles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  </head>
+  <body ng-app="albumList" ng-controller="albumListController" ng-init="getAlbums()">
+    <div id="header">
+      <h1>iAlbum</h1>
+      <div id="loginFailure" align="right" ng-if='loginFailure'>Login failure</div><br>
+      <div id="loginSpace" align="right" ng-if="notLoggedIn">
+        username <input type="text" id="username" ng-model='user.username'>
+        password <input type="password" id="password" ng-model='user.password'>
+        <input type="submit" id="loginBtn" value="log in" ng-click="login(user)">
+      </div>
+      <div id="logoutSpace" align="right" ng-if="isLoggedIn">
+        Hello {{helloUser}}!
+        <input ng-if="isLoggedIn" type="submit" id="logoutBtn" value="log out" ng-click="logout()">
+      </div>
+    </div>
+    <br>
+    <div id="left">
+      <ul class="leftList" ng-if="isLoggedIn">
+        <li ng-if="isLoggedIn" ng-class="{highlighted: albums[helloUserId]._id===selected}">
+          <a href="" ng-click="displayAlbum(albums[helloUserId])">My Album</a>
+        </li>
+        <li ng-repeat="album in albums" ng-if="album.username!=helloUser" ng-class="{highlighted: album._id===selected}">
+          <a href="" ng-click="displayAlbum(album)">{{album.username}}'s Album</a>
+        </li>
+      </ul>
+    </div>
+    <div id="right">
+      <div ng-if="isLoggedIn && albumIsChosen">
+        <div class="photos" ng-repeat="photo in photos">
+          <img id={{photo._id}} src={{photo.url}} ng-class="{overlay: photo._id===clicked}" ng-click="enlarge(photo._id)">
+          <table ng-class="{bottomontheRight: photo._id===clicked}"><tr>
+            <td ng-if="photo.likedby.length>0">
+              <div class="likes">{{photo.likedby[0]}}</div>
+              <div class="likes" ng-repeat="name in photo.likedby" ng-if="$index>0">, {{name}}</div>
+              &nbspliked this photo!
+            </td>
+            <td align="right" ng-if="myAlbumIsChosen"><input type="submit" id="deleteBtn" value="Delete" ng-click="deletePhoto(photo._id)"></td>
+            <td align="right" ng-if="myAlbumIsChosen==false"><input type="submit" id="likeBtn" value="Like" ng-click="likePhoto(photo._id)"></td>
+          </tr></table>
+        </div>
+        <div class="upload" ng-if="myAlbumIsChosen && !clicked">
+          <input type="file" id="myFile">
+          <button id="upload" ng-click="uploadPhoto()">Upload Photo</button>
+        </div>
+      </div>
+      <button class="X" ng-if="clicked" ng-click="closeX()">x</button>
+    </div>
+    <script src="/javascripts/myscripts.js"></script>
+  </body>
+</html>
